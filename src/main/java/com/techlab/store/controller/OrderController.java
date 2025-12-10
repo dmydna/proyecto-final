@@ -1,6 +1,5 @@
 package com.techlab.store.controller;
 
-import com.techlab.store.dto.OrderRequestDTO;
 import com.techlab.store.entity.Order;
 import com.techlab.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody OrderRequestDTO orderRequest) {
-        Order newOrder = orderService.createOrder(
-                orderRequest.getClientId(),
-                orderRequest.getDetails()
-        );
-        return newOrder;
+    public Order createOrder(@RequestBody Order order) {
+        return this.orderService.createOrder(order);
     }
 
 

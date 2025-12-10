@@ -39,38 +39,19 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long clientId, List<OrderDetail> details) {
-        log.info("Iniciando creación de pedido para Cliente ID: {}", clientId);
+    public Order createOrder(Order order) {
 
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + clientId));
+        // TODO
+        // falta las validaciones entre varias otras cosas (ej Id existe) .
+        // es una version simplicada.
 
-        Order order = new Order();
-        order.setClient(client);
-        order.setState(Order.orderState.PROCESANDO); // Estado inicial
-
-        Set<OrderDetail> orderDetails = new HashSet<>();
-
-        for (OrderDetail detailRequest : details) {
-            Product product = productRepository.findById(detailRequest.getProduct().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado."));
-
-            if (product.getStock() < detailRequest.getCantidad()) {
-                throw new RuntimeException("Stock insuficiente para el producto: " + product.getName());
-            }
-
-            product.setStock(product.getStock() - detailRequest.getCantidad());
-            productRepository.save(product);
-
-            OrderDetail detail = new OrderDetail();
+//      if (order.getClient() == null || order.getClient().getId() == null) {
+//            throw new RuntimeException("El pedido debe tener un Cliente asignado.");
+//      }
+        order.setState(Order.orderState.PROCESANDO);
+        for (OrderDetail detail : order.getDetails()) {
             detail.setOrder(order);
-            detail.setProduct(product);
-            detail.setCantidad(detailRequest.getCantidad());
-            orderDetails.add(detail);
         }
-
-        order.setDetails(orderDetails);
-
         return orderRepository.save(order);
     }
 
