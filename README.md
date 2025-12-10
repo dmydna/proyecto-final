@@ -27,7 +27,7 @@ main/src/com.techlab.store/   
 
 
 #### PENDIENTES (MAS CRITICOS):
--    **Manejo de Errores:** Hacen falta implementaciones robustas de **Excepciones** a nivel global y métodos para devolver **ResponseEntity** (códigos HTTP correctos como 404, 400, 201) en los controladores.
+-    **Manejo de Errores:** Hacen falta implementaciones de **Excepciones** a nivel global y métodos para devolver **ResponseEntity** (códigos HTTP correctos como 404, 400, 201) en los controladores.
 -   **Validaciones:** Se requieren validaciones completas (ej. @NotNull, @Size) en las entidades y validaciones de negocio en la capa Service.
 -   **Testing:** Ninguna de las clases principales ha sido testeada
 
