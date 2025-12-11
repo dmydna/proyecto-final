@@ -12,35 +12,19 @@ import lombok.ToString;
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id") // Clave foránea al Pedido
+    @Getter @Setter
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id") // Clave foránea al Producto
 
+    @Getter @Setter
     private Product product;
-    private int cantidad;
-
-    public Product getProduct() {
-        return this.product;
-    }
-
-    public Integer getCantidad() {
-        return this.cantidad;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
+    @Getter @Setter
+    private int quantity;
 }

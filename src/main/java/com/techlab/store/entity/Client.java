@@ -4,31 +4,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
+    @Setter @Getter
     private String name;
+    @Setter @Getter
     private String email;
+    @Setter @Getter
     private Boolean deleted;
-
-
-    public Long  getId(){
-        return this.id;
-    }
-    public String getName() {
-        return this.name;
-    }
-    public String getEmail(){
-        return  this.email;
-    }
-    public void setName(String name){
-        this.name = name;
-    }
-    public void setDeleted(Boolean d){
-        this.deleted = d;
-    }
 
 }

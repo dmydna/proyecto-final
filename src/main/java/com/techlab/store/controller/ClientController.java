@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clients")
-public class ClienteController {
+public class ClientController {
     @Autowired
     private ClientService clientService;
 
@@ -32,7 +32,6 @@ public class ClienteController {
     public Client editClientById(@PathVariable Long id, @RequestBody Client dataToEdit){
         return this.clientService.editClientById(id, dataToEdit);
     }
-
 
     @DeleteMapping("/{id}")
     public Client deleteProductById(@PathVariable Long id){

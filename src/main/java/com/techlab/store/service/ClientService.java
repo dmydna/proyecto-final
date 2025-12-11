@@ -25,6 +25,7 @@ public class ClientService {
         if (!cliente.getEmail().contains("@")) {
             throw new RuntimeException("Formato de email no valido: ");
         }
+
         return clientRepository.save(cliente);
     }
 
@@ -58,11 +59,9 @@ public class ClientService {
 
 
     public List<Client> findAllClient(String name){
-
         if (!name.isEmpty()){
             return this.clientRepository.findByNameContainingIgnoreCase(name);
         }
-
         return this.clientRepository.findAll();
     }
 

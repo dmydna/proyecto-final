@@ -1,14 +1,11 @@
 package com.techlab.store.entity;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 
 @Entity
 @Getter
@@ -25,41 +22,22 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
 
     // enum estado
     @Enumerated(EnumType.STRING)
+    @Getter @Setter
     private orderState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
+    @Getter @Setter
     private Client client;
   
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter @Setter
     private Set<OrderDetail> details = new HashSet<>();
 
 
-    public Client getClient() {
-        return this.client;
-    }
-
-    public orderState getState() {
-        return this.state;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public void setState(orderState state) {
-        this.state = state;
-    }
-
-    public void setDetails(Set<OrderDetail> orderDetails) {
-        this.details = orderDetails;
-    }
-
-    public Set<OrderDetail> getDetails() {
-        return this.details;
-    }
 }

@@ -1,32 +1,26 @@
 package com.techlab.store.service;
 
-import com.techlab.store.entity.Client;
+
 import com.techlab.store.entity.Order;
 import com.techlab.store.entity.OrderDetail;
-import com.techlab.store.entity.Product;
 import com.techlab.store.repository.ClientRepository;
 import com.techlab.store.repository.OrderRepository;
 import com.techlab.store.repository.ProductRepository;
 
-//import lombok.extern.slf4j.Slf4j;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-//@Slf4j
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ClientRepository clientRepository;
     private final ProductRepository productRepository;
-    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     @Autowired
     public OrderService(
@@ -40,14 +34,11 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(Order order) {
-
-        // TODO
-        // falta las validaciones entre varias otras cosas (ej Id existe) .
-        // es una version simplicada.
-
-//      if (order.getClient() == null || order.getClient().getId() == null) {
-//            throw new RuntimeException("El pedido debe tener un Cliente asignado.");
-//      }
+      // TODO
+      // agregar validaciones (ej Id existe)
+      if (order.getClient() == null || order.getClient().getId() == null) {
+            throw new RuntimeException("El pedido debe tener un Cliente asignado.");
+      }
         order.setState(Order.orderState.PROCESANDO);
         for (OrderDetail detail : order.getDetails()) {
             detail.setOrder(order);

@@ -5,20 +5,18 @@ import com.techlab.store.repository.ProductRepository;
 import com.techlab.store.utils.StringUtils;
 import java.util.List;
 import java.util.Optional;
-//import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 @Service
-//@Slf4j
+@Slf4j
 public class ProductService {
 
 
   private final ProductRepository productRepository;
   private final StringUtils stringUtils;
-  private static final Logger log = LoggerFactory.getLogger(ProductService.class);
+
 
   public ProductService(ProductRepository productRepository, StringUtils stringUtils) {
     this.productRepository = productRepository;

@@ -17,69 +17,22 @@ public class Product {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Getter
   private Long id;
 
+  @Getter @Setter
   private String name;
+  @Getter @Setter
   private String description;
+  @Getter @Setter
   private Double price;
+  @Getter @Setter
   private String category;
+  @Getter @Setter
   private Integer stock;
-
+  @Getter @Setter
   private Boolean deleted;
+  @Getter @Setter
   private LocalDate deletedDate;
-
-  public Long getId(){
-      return this.id;
-  }
-
-
-  public void setStock(Integer stock){
-      this.stock = stock;
-  }
-
-  public Integer getStock(){
-      return this.stock;
-  }
-
-
-
-  public String getDescription() {
-      return this.description = description;
-  }
-
-  public void setDescription(String description){
-      this.description = description;
-  }
-
-
-  public String getCategory(){
-      return this.category;
-  }
-
-  public void setCategory(String category){
-      this.category = category;
-  }
-
-
-  public void setPrice(Double price){
-      this.price = price;
-  }
-
-  public Double getPrice(){
-      return this.price;
-  }
-
-  public String getName() {
-      return this.name;
-  }
-  public void setName(String name){
-      this.name = name;
-  }
-  public void setDeleted(Boolean Deleted){
-      this.deleted = Deleted;
-  }
-  public Boolean getDeleted(){
-      return this.deleted;
-  }
 
 }
