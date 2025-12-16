@@ -1,12 +1,18 @@
 spring:
   application:
-    name: speedrun
+    name: store
 
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:ecommerce
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/techlabdb
+    username: root
+    password: 1234
+
+#  datasource:
+#    driver-class-name: ${DB_DRIVER}
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
 
   sql:
     init:
@@ -19,3 +25,9 @@ spring:
       path: /h2-console      # Ruta para acceder a la consola (http://localhost:8080/h2-console)
   jpa:
     defer-datasource-initialization: true
+    hibernate:
+       ddl-auto: update
+    properties:
+       hibernate:
+       format_sql: true
+       show-sql: true

@@ -1,5 +1,6 @@
 package com.techlab.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,15 +17,17 @@ public class OrderDetail {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id") // Clave foránea al Pedido
+    @JoinColumn(name = "order_id")
+    @JsonIgnoreProperties("details")
     @Getter @Setter
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id") // Clave foránea al Producto
-
+    @JoinColumn(name = "product_id")
+    @JsonIgnoreProperties("orderDetails")
     @Getter @Setter
     private Product product;
+
     @Getter @Setter
     private int quantity;
 }

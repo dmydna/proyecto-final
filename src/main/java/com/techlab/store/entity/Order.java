@@ -1,5 +1,6 @@
 package com.techlab.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Table(name = "T_ORDER")
 public class Order {
 
     public enum orderState {
@@ -32,10 +34,12 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
+    @JsonIgnoreProperties("orders")
     @Getter @Setter
     private Client client;
   
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("order")
     @Getter @Setter
     private Set<OrderDetail> details = new HashSet<>();
 

@@ -29,6 +29,11 @@ public class OrderController {
         return this.orderService.getOrderById(id);
     }
 
+    @GetMapping("/client/{id}")
+    public  List<Order> getOrderByClientId(@PathVariable Long id){
+        return this.orderService.getOrderByClientId(id);
+    }
+
     @GetMapping
     public List<Order> getAllOrders() {
         return this.orderService.getAllOrders();
