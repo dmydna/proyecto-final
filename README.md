@@ -18,52 +18,19 @@ main/src/com.techlab.store/   
     └── products.sql            # SQL para la inicialización de datos de productos de prueba.
 ```
 
-#### Endpoints (funcionales)
-
-* `\api\products`
-* `\api\products\{id}`
-* `\apí\orders`
-* `\api\orders\client\{id}`
-* `\api\orders\{id}`
-
-#### Estructuras
-
-producto:
-```C
- {
-     Long id: 1,
-     String name,
-     String description,
-     Double price,
-     String category,
-     Integer stock,
-     Boolean: true,
-     date deletedDate
-  },
-
-```
-
-pedio:
-```java
-
-```
-client:
-```
-```
-
 
 #### ESTADO DEL PROYECTO (SPRING BOOT):
 
 - La __API__ se ejecuta correctamente y gestiona las entidades (User, Client, Order, OrderDetails, Products).
 - __BASE__ del proyecto: [ejemplo-proyecto-final](https://github.com/AvilaEducation/clases-java-25254-tt-) ❤️
 - __ORIGEN__ de la migración:  [tp-java](https://github.com/dmydna/tp-java)
-- __IMPORTANTE__: 💀 Ninguna de las clases del proyecto ha sido testeada.
+- __IMPORTANTE__: 💀 NO TODAS las clases del proyecto ha sido testeada.
 
 ---
 
 #### EndPoint (funcionales)
 
-root : `api`
+root `api`:
 - `products`
 - `products\{id}`
 - `orders`
@@ -105,7 +72,6 @@ Client {
    String email,
    Boolean deleted
 }
-
 ````
 
 
