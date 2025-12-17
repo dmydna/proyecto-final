@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter @Setter
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

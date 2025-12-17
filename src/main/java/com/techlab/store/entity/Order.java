@@ -9,38 +9,30 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @ToString
 @Table(name = "T_ORDER")
 public class Order {
 
-    public enum orderState {
-        PROCESANDO,
-        COMPLETO,
-        CANCELADO,
-        EN_ENVIO
+    public enum OrderState {
+        PROCESANDO, COMPLETO, CANCELADO, EN_ENVIO
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
     private Long id;
 
     // enum estado
     @Enumerated(EnumType.STRING)
-    @Getter @Setter
-    private orderState state;
+    private OrderState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "clientId")
     @JsonIgnoreProperties("orders")
-    @Getter @Setter
     private Client client;
   
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("order")
-    @Getter @Setter
     private Set<OrderDetail> details = new HashSet<>();
 
 

@@ -41,7 +41,7 @@ public class OrderService {
       if (order.getClient() == null || order.getClient().getId() == null) {
             throw new RuntimeException("El pedido debe tener un Cliente asignado.");
       }
-      order.setState(Order.orderState.PROCESANDO);
+      order.setState(Order.OrderState.PROCESANDO);
 
       for (OrderDetail detail : order.getDetails()) {
           // establece relacion order<->orderDetail
@@ -75,11 +75,11 @@ public class OrderService {
 
 
     @Transactional
-    public Order updateOrderStatus(Long id, Order.orderState newState) {
+    public Order updateOrderStatus(Long id, Order.OrderState newState) {
         Order order = this.getOrderById(id);
         log.info("Actualizando estado de Pedido ID {} de {} a {}", id, order.getState(), newState);
         order.setState(newState);
-        if (newState == Order.orderState.CANCELADO) {
+        if (newState == Order.OrderState.CANCELADO) {
             log.warn("Pedido cancelado: Reponiendo stock.");
         }
         return orderRepository.save(order);
@@ -139,8 +139,8 @@ public class OrderService {
 
 
     private void validateOrderStateForEdit(Order order) {
-        if (order.getState() == Order.orderState.COMPLETO ||
-                order.getState() == Order.orderState.EN_ENVIO) {
+        if (order.getState() == Order.OrderState.COMPLETO ||
+                order.getState() == Order.OrderState.EN_ENVIO) {
             throw new RuntimeException("No se pueden editar los detalles de una orden en estado COMPLETO o EN_ENVIO.");
         }
     }

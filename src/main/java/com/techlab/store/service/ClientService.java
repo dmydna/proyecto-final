@@ -1,5 +1,7 @@
 package com.techlab.store.service;
 
+import com.techlab.store.dto.ClientDTO;
+import com.techlab.store.utils.ClientMapper;
 import com.techlab.store.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +17,22 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final StringUtils stringUtils;
 
+    @Autowired
+    private ClientMapper clientMapper;
 
     public ClientService(ClientRepository clientRepository, StringUtils stringUtils) {
         this.clientRepository = clientRepository;
         this.stringUtils = stringUtils;
     }
 
-    public Client save(Client cliente) {
-        if (!cliente.getEmail().contains("@")) {
+    public ClientDTO save(ClientDTO dto) {
+        if (!dto.getEmail().contains("@")) {
             throw new RuntimeException("Formato de email no valido: ");
         }
 
-        return clientRepository.save(cliente);
+        Client newClient = clientMapper.toEntity(dto);
+        Client savedClient = clientRepository.save(newClient);
+        return clientMapper.toDto(savedClient);
     }
 
 
@@ -34,55 +40,43 @@ public class ClientService {
         return this.clientRepository.findAll();
     }
 
-    public Client getClientById(Long id){
-        Optional<Client> clientOptional = this.clientRepository.findById(id);
-
-        if (clientOptional.isEmpty()){
-            throw new RuntimeException("Cliente no encontrado con ID: " + id);
-        }
-
-        return clientOptional.get();
+    public ClientDTO getClientById(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No encontrado"));
+        return this.clientMapper.toDto(client);
     }
 
-
-    public Client editClientById(Long id, Client dataToEdit){
-        Client client = this.getClientById(id);
-
-        if (!stringUtils.isEmpty(dataToEdit.getName())){
-            System.out.printf("Editando el nombre del cliente: viejo:%s - nuevo:%s", client.getName(), dataToEdit.getName());
-            client.setName(dataToEdit.getName());
-        }
-
-        return this.clientRepository.save(client);
+    public ClientDTO editClientById(Long id, ClientDTO dto){
+        Client clientEntity = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        this.clientMapper.updateClientFromDto(dto, clientEntity);
+        Client savedEntity = clientRepository.save(clientEntity);
+        return clientMapper.toDto(savedEntity);
     }
 
 
 
-    public List<Client> findAllClient(String name){
+    public List<ClientDTO> findAllClient(String name){
+        List<Client> clientsEntity = null;
         if (!name.isEmpty()){
-            return this.clientRepository.findByNameContainingIgnoreCase(name);
+            clientsEntity = this.clientRepository.findByNameContainingIgnoreCase(name);
+        }else{
+            clientsEntity = this.clientRepository.findAll();
         }
-        return this.clientRepository.findAll();
+        return this.clientMapper.toDtoList(clientsEntity);
+
     }
 
-    public Client deleteClientById(Long id) {
-        Client client = this.getClientById(id);
+    public ClientDTO deleteClientById(Long id) {
+        Client clientEntity = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        client.setDeleted(true);
-        this.clientRepository.save(client);
+        clientEntity.setDeleted(true);
+        this.clientRepository.save(clientEntity);
 
-        return client;
+        ClientDTO dto = this.clientMapper.toDto(clientEntity);
+        this.clientMapper.updateClientFromDto(dto, clientEntity);
+        return dto;
     }
 
-
-    public Client editProductById(Long id, Client dataToEdit){
-        Client client = this.getClientById(id);
-
-        if (!stringUtils.isEmpty(dataToEdit.getName())){
-            System.out.printf("Editando el nombre del producto: viejo:%s - nuevo:%s", client.getName(), dataToEdit.getName());
-            client.setName(dataToEdit.getName());
-        }
-
-        return this.clientRepository.save(client);
-    }
 }

@@ -43,7 +43,7 @@ public class OrderController {
     @PutMapping("/{id}/status")
     public Order updateStatus(
             @PathVariable Long id,
-            @RequestParam Order.orderState newState) {
+            @RequestParam Order.OrderState newState) {
         return this.orderService.updateOrderStatus(id, newState);
     }
 }
