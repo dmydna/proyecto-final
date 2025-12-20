@@ -1,6 +1,7 @@
 package com.techlab.store.service;
 
 import com.techlab.store.dto.ClientDTO;
+import com.techlab.store.dto.ClientFullDTO;
 import com.techlab.store.utils.ClientMapper;
 import com.techlab.store.utils.StringUtils;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.techlab.store.repository.ClientRepository;
 import com.techlab.store.entity.Client;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -25,14 +25,14 @@ public class ClientService {
         this.stringUtils = stringUtils;
     }
 
-    public ClientDTO save(ClientDTO dto) {
+    public ClientFullDTO save(ClientDTO dto) {
         if (!dto.getEmail().contains("@")) {
             throw new RuntimeException("Formato de email no valido: ");
         }
 
         Client newClient = clientMapper.toEntity(dto);
         Client savedClient = clientRepository.save(newClient);
-        return clientMapper.toDto(savedClient);
+        return clientMapper.toFullDto(savedClient);
     }
 
 
@@ -40,41 +40,41 @@ public class ClientService {
         return this.clientRepository.findAll();
     }
 
-    public ClientDTO getClientById(Long id) {
+    public ClientFullDTO getClientById(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
-        return this.clientMapper.toDto(client);
+        return this.clientMapper.toFullDto(client);
     }
 
-    public ClientDTO editClientById(Long id, ClientDTO dto){
+    public ClientFullDTO editClientById(Long id, ClientFullDTO dto){
         Client clientEntity = clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         this.clientMapper.updateClientFromDto(dto, clientEntity);
         Client savedEntity = clientRepository.save(clientEntity);
-        return clientMapper.toDto(savedEntity);
+        return clientMapper.toFullDto(savedEntity);
     }
 
 
 
-    public List<ClientDTO> findAllClient(String name){
+    public List<ClientFullDTO> findAllClient(String name){
         List<Client> clientsEntity = null;
         if (!name.isEmpty()){
             clientsEntity = this.clientRepository.findByNameContainingIgnoreCase(name);
         }else{
             clientsEntity = this.clientRepository.findAll();
         }
-        return this.clientMapper.toDtoList(clientsEntity);
+        return this.clientMapper.toFullDtoList(clientsEntity);
 
     }
 
-    public ClientDTO deleteClientById(Long id) {
+    public ClientFullDTO deleteClientById(Long id) {
         Client clientEntity = clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
         clientEntity.setDeleted(true);
         this.clientRepository.save(clientEntity);
 
-        ClientDTO dto = this.clientMapper.toDto(clientEntity);
+        ClientFullDTO dto = this.clientMapper.toFullDto(clientEntity);
         this.clientMapper.updateClientFromDto(dto, clientEntity);
         return dto;
     }

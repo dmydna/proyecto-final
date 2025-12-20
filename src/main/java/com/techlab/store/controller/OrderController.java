@@ -1,5 +1,6 @@
 package com.techlab.store.controller;
 
+import com.techlab.store.dto.OrderFullDTO;
 import com.techlab.store.entity.Order;
 import com.techlab.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +20,29 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
+    public OrderFullDTO createOrder(@RequestBody OrderFullDTO order) {
         return this.orderService.createOrder(order);
     }
 
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id) {
+    public OrderFullDTO getOrderById(@PathVariable Long id) {
         return this.orderService.getOrderById(id);
     }
 
     @GetMapping("/client/{id}")
-    public  List<Order> getOrderByClientId(@PathVariable Long id){
+    public  List<OrderFullDTO> getOrderByClientId(@PathVariable Long id){
         return this.orderService.getOrderByClientId(id);
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
+    public List<OrderFullDTO> getAllOrders() {
         return this.orderService.getAllOrders();
     }
 
 
     @PutMapping("/{id}/status")
-    public Order updateStatus(
+    public OrderFullDTO updateStatus(
             @PathVariable Long id,
             @RequestParam Order.OrderState newState) {
         return this.orderService.updateOrderStatus(id, newState);

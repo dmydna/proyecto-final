@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientDTO {
-    Long id;
-    String name;
-    String email;
+public class OrderFullDTO extends OrderDTO{
+    ClientDTO client;
 }

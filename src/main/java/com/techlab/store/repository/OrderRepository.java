@@ -20,6 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "JOIN FETCH od.product p")
     List<Order> findAllWithDetailsAndClient();
 
+    List<Order> findByClientId(Long clientId);
 
     @Query("SELECT o FROM Order o " +
             "JOIN FETCH o.client c " +

@@ -1,6 +1,11 @@
 package com.techlab.store.service;
 
 
+import com.techlab.store.dto.OrderDTO;
+import com.techlab.store.dto.OrderDetailDTO;
+import com.techlab.store.dto.OrderFullDTO;
+import com.techlab.store.dto.OrderSimpleDTO;
+import com.techlab.store.entity.Client;
 import com.techlab.store.entity.Order;
 import com.techlab.store.entity.OrderDetail;
 import com.techlab.store.entity.Product;
@@ -8,6 +13,8 @@ import com.techlab.store.repository.ClientRepository;
 import com.techlab.store.repository.OrderRepository;
 import com.techlab.store.repository.ProductRepository;
 
+import com.techlab.store.utils.ClientMapper;
+import com.techlab.store.utils.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +33,9 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
     public OrderService(
             OrderRepository orderRepository,
             ClientRepository clientRepository,
@@ -36,16 +46,21 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Order order) {
+    public OrderFullDTO createOrder(OrderFullDTO dto) {
 
-      if (order.getClient() == null || order.getClient().getId() == null) {
+      if (dto.getClient().getId() == null) {
             throw new RuntimeException("El pedido debe tener un Cliente asignado.");
       }
-      order.setState(Order.OrderState.PROCESANDO);
+      Client client = clientRepository.findById(dto.getClient().getId())
+              .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-      for (OrderDetail detail : order.getDetails()) {
+      Order newOrder = orderMapper.toEntity(dto);
+      newOrder.setClient(client);
+      newOrder.setState(Order.OrderState.PROCESANDO);
+
+      for (OrderDetail detail : newOrder.getDetails()) {
           // establece relacion order<->orderDetail
-          detail.setOrder(order);
+          detail.setOrder(newOrder);
 
           Product p = productRepository.findById(detail.getProduct().getId())
                   .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -54,48 +69,62 @@ public class OrderService {
               throw new RuntimeException("Stock insuficiente para el producto: " + p.getName());
           }
           // actualiza stock de producto
-          int nuevoStock = p.getStock() - detail.getQuantity();
-          p.setStock(nuevoStock);
-          productRepository.save(p);
+          p.setStock(p.getStock() - detail.getQuantity());
+          // productRepository.save(p); @transaccional lo actualiza?
       }
-      return orderRepository.save(order);
+      Order savedOrder = orderRepository.save(newOrder);
+      return orderMapper.toFullDto(savedOrder);
     }
 
 
     @Transactional(readOnly = true)
-    public Order getOrderById(Long orderId) {
-        return orderRepository.findOneWithDetailsAndClientById(orderId)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + orderId));
+    public OrderFullDTO getOrderById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+        return this.orderMapper.toFullDto(order);
     }
 
    @Transactional(readOnly = true)
-    public List<Order> getAllOrders() {
-        return orderRepository.findAllWithDetailsAndClient();
+    public List<OrderFullDTO> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        return this.orderMapper.toFullDtoList(orders);
     }
 
 
     @Transactional
-    public Order updateOrderStatus(Long id, Order.OrderState newState) {
-        Order order = this.getOrderById(id);
+    public OrderFullDTO updateOrderStatus(Long id, Order.OrderState newState) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
         log.info("Actualizando estado de Pedido ID {} de {} a {}", id, order.getState(), newState);
-        order.setState(newState);
+
         if (newState == Order.OrderState.CANCELADO) {
             log.warn("Pedido cancelado: Reponiendo stock.");
+            for(OrderDetail detail : order.getDetails()){
+                Product p = detail.getProduct();
+                p.setStock(p.getStock() + detail.getQuantity());
+            }
         }
-        return orderRepository.save(order);
+        order.setState(newState);
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.toFullDto(savedOrder);
     }
 
-    public Order updateOrderDetail(Long id, Set<OrderDetail> details){
-        Order order = this.getOrderById(id);
+    public OrderFullDTO updateOrderDetail(Long id, Set<OrderDetail> details){
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
         order.setDetails(details);
 
-        return this.orderRepository.save(order);
+        Order savedOrder = this.orderRepository.save(order);
+        return this.orderMapper.toFullDto(savedOrder);
     }
+
 
 
     @Transactional
-    public Order editOrderById(Long id, Order dataToEdit) {
-        Order existingOrder = this.getOrderById(id);
+    public OrderFullDTO editOrderById(Long id, Order dataToEdit) {
+        Order existingOrder = orderRepository.findOneWithDetailsAndClientById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+
         validateOrderStateForEdit(existingOrder);
 
         if (dataToEdit.getClient() != null) {
@@ -106,7 +135,9 @@ public class OrderService {
         if (dataToEdit.getDetails() != null) {
             this.updateOrderDetailsAndStock(existingOrder, dataToEdit.getDetails());
         }
-        return this.orderRepository.save(existingOrder);
+
+        Order saveOrder = this.orderRepository.save(existingOrder);
+        return this.orderMapper.toFullDto(saveOrder);
     }
 
 
@@ -177,7 +208,9 @@ public class OrderService {
         }
     }
 
-    public List<Order> getOrderByClientId(Long id) {
-        return this.orderRepository.findAllWithDetailsAndClientById(id);
+    public List<OrderFullDTO> getOrderByClientId(Long id) {
+//      List<Order> orders = this.orderRepository.findAllWithDetailsAndClientById(id);
+        List<Order> orders = this.orderRepository.findByClientId(id);
+        return this.orderMapper.toFullDtoList(orders);
     }
 }
